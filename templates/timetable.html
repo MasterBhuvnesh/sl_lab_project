@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Timetable</title>
+  <!-- Import Poppins Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet" />
+  <style>
+    /* Global Styles */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      background: #f5f7fa;
+      color: #000000;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #2c3e50;
+      border-bottom: 2px solid #e9ecef;
+      padding-bottom: 10px;
+    }
+    
+    /* Table Styling */
+    .timetable {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .timetable th,
+    .timetable td {
+      border: 1px solid #e0e0e0;
+      padding: 12px;
+      text-align: center;
+      font-size: 16px;
+    }
+    .timetable th {
+      background-color: #3498db;
+      color: #fff;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .timetable td {
+      background-color: #fafafa;
+      transition: background-color 0.3s ease;
+    }
+    .timetable td:hover {
+      background-color: #ffffff;
+    }
+    .timetable tr:nth-child(even) td {
+      background-color: #ffffff;
+    }
+    .timetable tr:nth-child(odd) td {
+      background-color: #ffffff;
+    }
+    
+    /* Content Styling */
+    .subject {
+      font-weight: 600;
+      color: #000000;
+      margin-bottom: 4px;
+    }
+    .room {
+      font-size: 12px;
+      color: #6c757d;
+    }
+
+    .recess {
+      background-color: #ffffff;
+      color: #00ff3c;
+      font-weight: 800;
+    }
+    
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+      .timetable th,
+      .timetable td {
+        font-size: 12px;
+        padding: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Timetable for Section A</h2>
+    <table class="timetable">
+      <tr>
+        <th>Day / Time</th>
+        {% set all_times = ['8:00-9:00', '9:00-10:00', '10:00-11:00', '11:00-12:00', '12:00-1:00', '1:00-2:00', '2:00-3:00'] %}
+        {% for time in all_times %}
+          <th>{{ time }}</th>
+        {% endfor %}
+      </tr>
+      {% for day, schedule in timetable.items() %}
+        <tr>
+          <th>{{ day }}</th>
+          {% for time in all_times %}
+            {% set slot_list = schedule | selectattr("time", "equalto", time) | list %}
+            {% if slot_list %}
+              {% set slot = slot_list[0] %}
+              <td {% if slot.subject == 'RECESS' %}class="recess"{% endif %}>
+                {% if slot.subject != 'RECESS' %}
+                  <div class="subject">{{ slot.subject }}</div>
+                  <div class="room">{{ slot.room if slot.room is defined else 'N/A' }}</div>
+                {% else %}
+                  {{ slot.subject }}
+                {% endif %}
+              </td>
+            {% else %}
+              <td></td>
+            {% endif %}
+          {% endfor %}
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
+</body>
+</html>
